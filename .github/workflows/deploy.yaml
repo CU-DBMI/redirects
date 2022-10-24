@@ -14,24 +14,24 @@ jobs:
       - name: Get this repo's code
         uses: actions/checkout@v3
         with:
-          path: redirects # save in separate sub-folder
+          path: redirects-repo # save in separate sub-folder
 
       - name: Get website repo's code
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.repository_owner }}/redirects-website # assume same user/org
-          path: redirects-website # save in separate sub-folder
+          repository: ${{ github.repository_owner }}/website-repo # assume same user/org
+          path: website-repo # save in separate sub-folder
 
       - name: Install packages
         run: npm install yaml
 
       - name: Run encode script
-        run: node ./redirects/encode.js
+        run: node ./redirects-repo/encode.js
 
       - name: Commit result to website repo
         uses: leigholiver/commit-with-deploy-key@v1.0.3
         with:
-          source: ./redirects-website/redirect.js # only file changed by encode script
-          destination_repo: ${{ github.repository_owner }}/redirects-website # assume same user/org
+          source: ./website-repo/redirect.js # only file changed by encode script
+          destination_repo: ${{ github.repository_owner }}/website-repo # assume same user/org
           deploy_key: ${{ secrets.DEPLOY_KEY }} # permission to commit to different repo
           commit_message: "Update redirects"

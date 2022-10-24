@@ -31,8 +31,9 @@ for (const file of files) {
   }
 
   // go through each entry
-  for (const [index, entry] of Object.entries(data)) {
-    const log = `${file} entry ${Number(index) + 1}`;
+  for (let [index, entry] of Object.entries(data)) {
+    index = Number(index) + 1;
+    const log = `${file} entry ${index}`;
 
     // check if dict
     if (typeof entry !== "object") {
@@ -53,8 +54,9 @@ for (const file of files) {
     // normalize "from" field. lower case, remove leading slashes.
     entry.from = entry.from.toLowerCase().replace(/^(\/+)/, "");
 
-    // keep record of source yaml file
+    // keep record of source yaml file and entry number
     entry._source = file;
+    entry._entry = index;
 
     // append to master list
     list.push(entry);
@@ -64,24 +66,21 @@ for (const file of files) {
 console.info("Combined redirects list:", list);
 
 // check for duplicate "from" fields
-const counts = {};
-for (const { from, _source } of list) {
-  if (!counts[from]) counts[from] = {};
-  if (!counts[from][_source]) counts[from][_source] = 0;
-  counts[from][_source]++;
-}
-for (const [from, sources] of Object.entries(counts)) {
-  const total = Object.values(sources).reduce((sum, count) => sum + count, 0);
-  if (total <= 1) continue;
-  const duplicates = Object.entries(sources)
-    .map(([source, count]) => `${count} in ${source}`)
-    .join(", ");
-  errors.push(`"from: ${from}" has duplicates: ${duplicates}`);
+const duplicates = {};
+for (const entry of list)
+  duplicates[entry.from] = [...(duplicates[entry.from] || []), entry];
+for (const [from, entries] of Object.entries(duplicates)) {
+  const count = entries.length;
+  if (count <= 1) continue;
+  const duplicates = entries
+    .map(({ _source, _entry }) => `\n\t${_source} entry ${_entry}`)
+    .join("");
+  errors.push(`"from: ${from}" appears ${count} time(s): ${duplicates}`);
 }
 
 // report and throw errors
 if (errors.length) {
-  errors.forEach((message) => console.warn(message));
+  errors.forEach((message) => console.error(message));
   // only throw (exit) at end so we get full report without multiple runs
   throw new Error(`There were ${errors.length} errors`);
 }
@@ -92,7 +91,7 @@ const encoded = Buffer.from(JSON.stringify(list)).toString("base64");
 console.info("Encoded redirects list:", encoded);
 
 // redirect script from website repo
-const script = "./redirects-website/redirect.js";
+const script = "./website-repo/redirect.js";
 
 // load contents of script
 const contents = readFileSync(script, "utf8").toString();

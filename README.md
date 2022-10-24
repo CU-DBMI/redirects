@@ -19,22 +19,23 @@ You can do this [directly on github.com](../../edit/main/redirects.yaml) (tip: p
 
 ## Motivation
 
-You've likely heard of a service called [Bitly](https://bitly.com/).
-It allows you to convert a long link like `some-website.com/a-long-url?search=a-bunch-of-characters` into a shorter one like `bit.ly/98K8eH`.
-When someone visits the shorter link, Bitly automatically "redirects" them to the longer one.
+You've likely heard of services like [Bitly](https://bitly.com/), [TinyURL](https://tinyurl.com/), [Rebrandly](https://www.rebrandly.com/), and [others](https://zapier.com/blog/best-url-shorteners/).
+They allow you to convert a long link like `some-website.com/a-long-url?search=a-bunch-of-characters` into a shorter one like `bit.ly/98K8eH`.
+When someone visits the shorter link, the service automatically "redirect" them to the longer one.
 You can think of it like a shortcut.
 
-Bitly also offers several other features that you probably want:
+These services usually offer several other features that you probably want too:
 
-- You can customize the text after the `/`, giving you a url that a human could actually remember and type in manually, like `bit.ly/MyCoolLink` (they call these "back-halves").
+- You can customize the text after the `/`, giving you a url that a human could actually remember and type in manually, like `bit.ly/MyCoolLink` (some call these "back-halves").
 - You can set up a custom domain to brand your links the way you want, giving you an even nicer and easier-to-use link, like `my-website.com/MyCoolLink`.
 - You can see how many and what kinds of people have used the link over time (i.e. analytics).
 
 This all sounds great, so what's the problem?
-Well namely: _Bitly [hides or limits a lot of this functionality behind a paywall](https://bitly.com/pages/pricing)_, and their free plan has become more and more limited over time.
-This may not be a problem for you, especially if you value the convenience of having a simple service that handles everything automatically.
-And there are certainly [other services that compete with Bitly](https://zapier.com/blog/best-url-shorteners/) which may offer you what you want for free (for now).
+Well namely: **They hide or limit a lot of this functionality behind a paywall.**
+Bitly, the de facto standard, [is especially quite expensive](https://bitly.com/pages/pricing).
+While you may be able to find one that gives you most or all of what you want for free right now, free plans have generally become more and more limited over time.
 
+Paying for a plan may not be a problem for you, especially if you value the convenience of having a simple service that handles everything automatically.
 But with just a little bit of setup, we can accomplish all of this in a much better way.
 Well, at least much better-suited to the _target audience of this approach_: **People/organizations who use GitHub and Git**.
 
@@ -46,10 +47,13 @@ Here's how this approach compares to Bitly and similar services.
 
 - Free(er)!
   You only need to pay for a custom domain name, if you want.
-- Not subject to the pricing whims of large companies.
-  Features and cost shouldn't change.
-- Uses tools and workflows you're already accustomed to and ideally prefer.
-  You don't need to create a new account just for this purpose, like you do for Bitly.
+- Not subject to the pricing whims of Bitly or similar services.
+  Pricing and features should remain the same.
+- Uses tools and workflows you're already accustomed to and ideally prefer (assuming you're in the target audience mentioned above).
+  You don't need to create a new account just for this purpose, like you do for e.g. Bitly.
+- Multiple accounts can collaborate on the same set of links.
+  Many url shortening services don't offer this, or only offer it at enterprise-level pricing.
+  Typically, one set of links can only be tied to a single account.
 - You get a nice git history of all of your links; who changed what and when.
 - You're in complete control.
   With a bit of coding knowledge, you can customize it any way you'd like.
@@ -85,7 +89,7 @@ You can set this website up at a custom domain to make your links shorter and ni
 After the one-time setup, **all you have to do is edit the `.yaml` files, and everything else updates automatically**, within a minute or so.
 
 <p align="center">
-  <img height="300" src="https://user-images.githubusercontent.com/8326331/197588654-48f065e5-ca42-4ebc-93b0-7096a402ec18.jpg?raw=true" alt="Diagram of this approach. Explained in text form below.">
+  <img height="300" src="https://user-images.githubusercontent.com/8326331/197649364-90e041a9-397f-4242-b27a-2889793b6dcd.jpg?raw=true" alt="Diagram of this approach. Explained in text form below.">
 </p>
 
 Adding/removing/changing a link goes like this:
@@ -109,9 +113,9 @@ Then, a user visiting a link goes like this:
 
 ### Set up repos
 
-1. [Fork this repo](../../fork) to your user/organization.
+1. [Fork the _redirects repo_](../../fork) (this repo) to your user/organization.
 2. [Make it private](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility).
-3. [Fork the _website repo_](../../../redirects-website) to your user/organization.
+3. [Fork the _website repo_](../../../redirects-website/fork) to your user/organization.
 4. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
 5. GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/repo-name`.
 
