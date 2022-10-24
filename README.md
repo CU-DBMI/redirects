@@ -85,7 +85,7 @@ You can set this website up at a custom domain to make your links shorter and ni
 After the one-time setup, **all you have to do is edit the `.yaml` files, and everything else updates automatically**, within a minute or so.
 
 <p align="center">
-  <img height="300" src="https://user-images.githubusercontent.com/8326331/197359004-4b7a7567-7314-41e5-bba2-5b45b909330e.jpg?raw=true" alt="Diagram of this approach. Explained in text form below.">
+  <img height="300" src="https://user-images.githubusercontent.com/8326331/197588654-48f065e5-ca42-4ebc-93b0-7096a402ec18.jpg?raw=true" alt="Diagram of this approach. Explained in text form below.">
 </p>
 
 Adding/removing/changing a link goes like this:
