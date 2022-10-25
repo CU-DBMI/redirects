@@ -11,6 +11,7 @@ _Counterpart to the [redirects-website repo](../../../redirects-website)._
 ## How to edit
 
 1. Add/change/remove redirect entries in one or more [`.yaml` files in the `redirects` folder](../../blob/main/redirects/redirects.yaml).
+   The `from` field is **case-insensitive**.
 2. Commit the changes to the `main` branch.
 3. Changes should take effect automatically within a minute or so.
    Verify that no errors occurred in the automatic process here: [![Encode and deploy](../../actions/workflows/deploy.yaml/badge.svg)](../../actions/workflows/deploy.yaml)
@@ -105,7 +106,7 @@ Then, a user visiting a link goes like this:
 2. `chatroom.html` isn't a file in the _website repo_, and thus isn't a page on the website, so GitHub loads [`404.html`](https://en.wikipedia.org/wiki/HTTP_404) for the user instead (but preserves the `/chatroom` url).
    This file immediately runs some scripts.
 3. The analytics code snippet sends[^2] stats like url, IP, date, time, location, etc. off to Google Analytics or whoever.
-4. The `redirect.js` script decodes the redirect lists previously encoded from the _redirects repo_, finds the long url corresponding to "chatroom", and navigates there instead.
+4. The `redirect.js` script decodes the redirect lists previously encoded from the _redirects repo_, finds the long url corresponding to "chatroom" (**case-insensitive**), and navigates there instead.
 5. They arrive at the intended destination, e.g. `zoom.us/j/12345abcdef`, with virtually no perceptible delay.
 
 ## Setup
@@ -158,12 +159,12 @@ These aren't always necessary or desired, but may help the users and editors of 
 
 ### Existing site
 
-If you already have an existing website being hosted with GitHub Pages that you want to incorporate this approach into:
+If you already have a website being hosted with GitHub Pages that you want to incorporate this approach into:
 
 1. Skip forking the _website repo_.
 2. Copy the [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo.
 3. [Include it](https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML#applying_css_and_javascript_to_html) at the top of your 404 page `<head>`, after your analytics script(s) but before anything else (so the redirection happens immediately).
-   If an existing page and a redirect have same name/path, the redirect won't happen since the user won't get a 404.
+   If an existing page and a redirect have same name/path, the redirect won't happen since the user won't get a [`404`](https://en.wikipedia.org/wiki/HTTP_404).
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
 
