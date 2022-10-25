@@ -1,10 +1,9 @@
-const { resolve, readdirSync, readFileSync, writeFileSync } = require("fs");
+const { readFileSync, writeFileSync } = require("fs");
+const glob = require("glob");
 const { parse } = require("yaml");
 
-// get redirect yaml files in this repo
-const files = readdirSync(resolve(__dirname, "redirects")).filter((file) =>
-  /\.ya?ml$/.test(file)
-);
+// get yaml files that match glob pattern
+const files = glob.sync("*.y?(a)ml");
 
 // start master list of redirects
 const list = [];

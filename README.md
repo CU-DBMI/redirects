@@ -10,8 +10,8 @@ _Counterpart to the [redirects-website repo](../../../redirects-website)._
 
 ## How to edit
 
-1. Add/change/remove redirect entries in one or more [`.yaml` files in the `redirects` folder](../../blob/main/redirects/redirects.yaml).
-   The `from` field is **case-insensitive**.
+1. Add/change/remove redirect entries in one or more [`.yaml` files in the top folder](../../blob/main/redirects.yaml).
+   Note: the `from` field is **case-insensitive**.
 2. Commit the changes to the `main` branch.
 3. Changes should take effect automatically within a minute or so.
    Verify that no errors occurred in the automatic process here: [![Encode and deploy](../../actions/workflows/deploy.yaml/badge.svg)](../../actions/workflows/deploy.yaml)
@@ -55,9 +55,10 @@ Here's how this approach compares to Bitly and similar services.
 - Multiple accounts can collaborate on the same set of links.
   Many url shortening services don't offer this, or only offer it at enterprise-level pricing.
 - You get a nice git history of all of your links; who changed what and when.
+- You can use whatever analytics service you want, e.g. Google Analytics.
 - You're in complete control.
   With a bit of coding knowledge, you can customize it any way you'd like.
-  Notably, you can use whatever analytics service you want, e.g. Google Analytics.
+  All of the code has detailed comments and is written to be flexible/editable.
 
 **The equivalent**:
 
@@ -94,7 +95,7 @@ After the one-time setup, **all you have to do is edit the `.yaml` files, and ev
 
 Adding/removing/changing a link goes like this:
 
-1. You change one or more of the `.yaml` files in the `redirects` folder of the _redirects repo_.
+1. You change one or more of the `.yaml` files in the _redirects repo_.
 2. `deploy.yaml` tells [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) that any time someone commits a change to the repo, it should automatically run the `encode.js` script.
 3. The `encode.js` script combines all of your `.yaml` files into one, and encodes it into a format that isn't searchable or human-readable[^1].
 4. `deploy.yaml` then tells GitHub to take the result of the `encode.js` script and commit it to the `redirect.js` script in the _website repo_.
