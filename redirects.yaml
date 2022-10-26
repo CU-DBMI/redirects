@@ -1,0 +1,5 @@
+- from: chatroom
+  to: zoom.us/j/12345abcdef
+- from: googledoc
+  to: docs.google.com/document/d/12345abcdef
+# ... etc.

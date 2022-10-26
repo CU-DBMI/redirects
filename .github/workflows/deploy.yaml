@@ -1,0 +1,45 @@
+name: Encode and deploy
+
+on:
+  # when someone makes a change directly to main branch
+  push:
+    branches:
+      - main
+  # when someone requests a change to main branch
+  pull_request:
+    branches:
+      - main
+
+env:
+  website_repo: redirects-website
+
+jobs:
+  encode:
+    name: Encode and deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get this repo's code
+        uses: actions/checkout@v3
+        with:
+          path: redirects-repo # save in separate sub-folder
+
+      - name: Get website repo's code
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository_owner }}/${{ env.website_repo }} # assume same user/org
+          path: website-repo # save in separate sub-folder
+
+      - name: Install packages
+        run: npm install glob yaml
+
+      - name: Run encode script
+        run: node ./redirects-repo/encode.js
+
+      - name: Commit result to website repo
+        if: ${{ github.event_name == 'push' }}
+        uses: leigholiver/commit-with-deploy-key@v1.0.3
+        with:
+          source: ./website-repo/redirect.js # only file changed by encode script
+          destination_repo: ${{ github.repository_owner }}/${{ env.website_repo }} # assume same user/org
+          deploy_key: ${{ secrets.DEPLOY_KEY }} # permission to commit to different repo
+          commit_message: "Update redirects"
