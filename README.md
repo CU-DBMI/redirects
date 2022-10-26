@@ -12,7 +12,7 @@ _Counterpart to the [redirects-website repo](../../../redirects-website)._
 
 1. Add/change/remove redirect entries in one or more [`.yaml` files in the top folder](../../blob/main/redirects.yaml).
    Note: the `from` field is **case-insensitive**.
-2. Commit the changes to the `main` branch.
+2. Commit the changes to the `main` branch, either directly or with a pull request (recommended so the automatic process can catch errors before the changes go live).
 3. Changes should take effect automatically within a minute or so.
    Verify that no errors occurred in the automatic process here: [![Encode and deploy](../../actions/workflows/deploy.yaml/badge.svg)](../../actions/workflows/deploy.yaml)
 
@@ -118,7 +118,7 @@ Then, a user visiting a link goes like this:
 2. [Make it private](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility).
 3. [Fork the _website repo_](../../../redirects-website/fork) to your user/organization.
 4. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
-5. GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/repo-name`.
+5. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/repo-name`.
 
 ### Connect repos
 
@@ -148,7 +148,7 @@ In summary:
 2. Point your domain name provider to GitHub Pages using an `A` record.
    This is slightly different for each company; they should have their own instructions on how to do it.
 3. Set the custom domain field in the "Pages" settings of the _website repo_ (automatically creates a `CNAME` file in the repo).
-4. GitHub should tell you that your site is now being hosted at e.g. `your-domain.com`.
+4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-domain.com`.
 
 ### Add notes
 

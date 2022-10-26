@@ -1,9 +1,12 @@
 const { readFileSync, writeFileSync } = require("fs");
+const { resolve } = require("path");
 const glob = require("glob");
 const { parse } = require("yaml");
 
 // get yaml files that match glob pattern
-const files = glob.sync("*.y?(a)ml");
+const files = glob.sync("*.y?(a)ml", { cwd: __dirname });
+
+log("Files", files);
 
 // start master list of redirects
 const list = [];
@@ -14,7 +17,9 @@ const errors = [];
 // go through each yaml file
 for (const file of files) {
   // load file contents
-  const contents = readFileSync(file, "utf8");
+  const contents = readFileSync(resolve(__dirname, file), "utf8");
+
+  log(`${file} contents`, contents);
 
   // try to parse as yaml
   let data;
@@ -34,23 +39,23 @@ for (const file of files) {
   // go through each entry
   for (let [index, entry] of Object.entries(data)) {
     index = Number(index) + 1;
-    const log = `${file} entry ${index}`;
+    const trace = `${file} entry ${index}`;
 
     // check if dict
     if (typeof entry !== "object") {
-      errors.push(`${log} is not a dict`);
+      errors.push(`${trace} is not a dict`);
       continue;
     }
 
     // check "from" field
     if (!(typeof entry.from === "string" && entry.from.trim())) {
-      errors.push(`${log} "from" field invalid`);
+      errors.push(`${trace} "from" field invalid`);
       continue;
     }
 
     // check "to" field
     if (!(typeof entry.to === "string" && entry.to.trim()))
-      errors.push(`${log} "to" field invalid`);
+      errors.push(`${trace} "to" field invalid`);
 
     // normalize "from" field. lower case, remove leading slashes.
     entry.from = entry.from.toLowerCase().replace(/^(\/+)/, "");
@@ -64,7 +69,7 @@ for (const file of files) {
   }
 }
 
-console.info("Combined redirects list:", list);
+log("Combined redirects list", list);
 
 // check for duplicate "from" fields
 const duplicates = {};
@@ -74,22 +79,22 @@ for (const [from, entries] of Object.entries(duplicates)) {
   const count = entries.length;
   if (count <= 1) continue;
   const duplicates = entries
-    .map(({ _source, _entry }) => `\n\t${_source} entry ${_entry}`)
+    .map(({ _source, _entry }) => `\n${_source} entry ${_entry}`)
     .join("");
   errors.push(`"from: ${from}" appears ${count} time(s): ${duplicates}`);
 }
 
 // report and throw errors
 if (errors.length) {
-  errors.forEach((message) => console.error(message));
+  errors.forEach(error);
   // only throw (exit) at end so we get full report without multiple runs
-  throw new Error(`There were ${errors.length} errors`);
+  throw new Error(`${errors.length} error(s)`);
 }
 
 // encode redirect list to base64 to obfuscate
 const encoded = Buffer.from(JSON.stringify(list)).toString("base64");
 
-console.info("Encoded redirects list:", encoded);
+log("Encoded redirects list", encoded);
 
 // redirect script from website repo
 const script = "./website-repo/redirect.js";
@@ -101,16 +106,26 @@ const contents = readFileSync(script, "utf8").toString();
 const regex = /(list\s*=\s*")([A-Za-z0-9+\/=]*)(")/s;
 
 // get encoded redirect list currently in script
-const currentEncoded = contents.match(regex)?.[2];
+const oldEncoded = contents.match(regex)?.[2];
 
 // check that we could find it (and thus can replace it)
-if (typeof currentEncoded !== "string")
+if (typeof oldEncoded !== "string")
   throw new Error("Couldn't parse redirect script");
 
-console.info("Previous encoded redirects list:", currentEncoded);
+log("Old encoded redirects list", oldEncoded);
 
 // update encoded string in script
 const newContents = contents.replace(regex, "$1" + encoded + "$3");
 
 // write updated redirect script to website repo
 writeFileSync(script, newContents, "utf-8");
+
+// debug util
+function log(message, data) {
+  console.info("\033[1m\033[96m" + message + "\033[0m");
+  console.log(data);
+  console.log();
+}
+function error(message) {
+  console.error("\033[1m\033[91m" + message + "\033[0m");
+}

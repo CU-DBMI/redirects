@@ -1,8 +1,12 @@
 name: Encode and deploy
 
-# when someone makes a change to main branch of this repo
 on:
+  # when someone makes a change directly to main branch
   push:
+    branches:
+      - main
+  # when someone requests a change to main branch
+  pull_request:
     branches:
       - main
 
@@ -29,6 +33,7 @@ jobs:
         run: node ./redirects-repo/encode.js
 
       - name: Commit result to website repo
+        if: ${{ github.event_name == 'push' }}
         uses: leigholiver/commit-with-deploy-key@v1.0.3
         with:
           source: ./website-repo/redirect.js # only file changed by encode script
