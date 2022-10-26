@@ -169,6 +169,6 @@ If you already have a website being hosted with GitHub Pages that you want to in
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
 
-[^1]: This approach does not _encrypt_ your redirect list, it only _obfuscates_ it. Anyone with some coding knowledge could still figure out all of your redirect lists with some effort. Because of the way this method works, true encryption is impossible because any key needed for decryption would also need to be in the `redirect.js` script, which the attacker would have access to.
+[^1]: This approach does not _encrypt_ your redirect list, it only _obfuscates_ it. Anyone with some coding knowledge could still figure out all of your redirect lists with some effort.
 [^2]: The analytics service you're using _should_ be able to capture all the necessary stats in time, before the redirection happens. But these services are usually closed source, so we can't know for sure exactly how they work. However, in testing with Google Analytics at least, everything seems to be captured fine.
 [^3]: You would need to modify the `deploy.yaml` workflow to be able to commit/push/upload the result to wherever your website is, integrate it into your code as appropriate, and trigger a re-build of your website.
