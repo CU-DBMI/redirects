@@ -10,6 +10,9 @@ on:
     branches:
       - main
 
+env:
+  website_repo: redirects-website
+
 jobs:
   encode:
     name: Encode and deploy
@@ -23,7 +26,7 @@ jobs:
       - name: Get website repo's code
         uses: actions/checkout@v3
         with:
-          repository: ${{ github.repository_owner }}/redirects-website # assume same user/org
+          repository: ${{ github.repository_owner }}/${{ env.website_repo }} # assume same user/org
           path: website-repo # save in separate sub-folder
 
       - name: Install packages
@@ -37,6 +40,6 @@ jobs:
         uses: leigholiver/commit-with-deploy-key@v1.0.3
         with:
           source: ./website-repo/redirect.js # only file changed by encode script
-          destination_repo: ${{ github.repository_owner }}/redirects-website # assume same user/org
+          destination_repo: ${{ github.repository_owner }}/${{ env.website_repo }} # assume same user/org
           deploy_key: ${{ secrets.DEPLOY_KEY }} # permission to commit to different repo
           commit_message: "Update redirects"

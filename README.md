@@ -170,7 +170,7 @@ If you already have a website being hosted with GitHub Pages that you want to in
 
 1. Skip forking the _website repo_.
 2. Copy the [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo.
-3. [Include it](https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML#applying_css_and_javascript_to_html) at the top of your 404 page `<head>`, after your analytics script(s) but before anything else (so the redirection happens immediately).
+3. Include it in your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
    If an existing page and a redirect have same name/path, the redirect won't happen since the user won't get a [`404`](https://en.wikipedia.org/wiki/HTTP_404).
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
