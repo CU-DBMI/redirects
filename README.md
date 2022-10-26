@@ -154,9 +154,15 @@ In summary:
 
 These aren't always necessary or desired, but may help the users and editors of your links.
 
-- In your _redirects repo_, add a big warning to the top of the readme like "_Do not share links here without permission 🔒_", so that people who have access understand that it's privileged info.
-- In your _website repo_, add an `index.html` page with some filler content like "_This website just performs redirects for [YOUR ORG]_", in case people go to the root of the website with no e.g. `/some-link`.
-- In your _website repo_, add a big link to the top of the readme to remind people where your website is hosted, e.g. `your-domain.com` or `your-org.github.io/repo-name`.
+In your _redirects repo_:
+
+- Add a big warning to the top of the readme like "_Do not share links here without permission 🔒_", so that people who have access understand that it's privileged info.
+
+In your _website repo_:
+
+- Add a big link to the top of the readme to remind people where your website is hosted, e.g. `your-domain.com` or `your-org.github.io/repo-name`.
+- In `redirect.js`, customize what happens when a user visits a url that has no matching `from` redirect (fallback action).
+- Add an `index.html` page with some filler content like "_This website just performs redirects for [YOUR ORG]_", in case people go to the root of the website with no e.g. `/some-link`.
 
 ### Existing site
 
