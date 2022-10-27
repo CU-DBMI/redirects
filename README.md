@@ -120,7 +120,7 @@ Then, a user visiting a link goes like this:
 2. [Use the _website repo_ as a template](../../../redirects-website/generate).
    _Name it `redirects-website` and make it public_.
 3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
-4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/repo-name`.
+4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/redirects-website`.
 
 If you ever need to pull in updates from these templates, [see the instructions here](https://stackoverflow.com/questions/56577184/github-pull-changes-from-a-template-repository).
 
@@ -140,12 +140,18 @@ For Google Analytics, [those instructions are here](https://support.google.com/a
 
 When you find the code snippet, paste it into `404.html` where marked (above the `redirect.js` script).
 
-### Set up custom domain
+### Set up base url
 
 By default, GitHub Pages will host your redirects website at a url like `your-org.github.io/repo-name/some-link`.
-To turn this into a nicer `your-domain.com/some-link`, you need to set up a custom domain.
+You can make this shorter by customizing your base url in one of two ways.
 
-To do this, [follow the instructions here](https://docs.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site#configuring-an-apex-domain).
+Note: If you do either of these, set `baseurl` to `""` in the `redirect.js` script.
+
+#### Custom domain
+
+e.g. `your-domain.com/some-link`
+
+[Follow the instructions here](https://docs.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site#configuring-an-apex-domain).
 In summary:
 
 1. Purchase a domain name from a reputable service.
@@ -153,6 +159,15 @@ In summary:
    This is slightly different for each company; they should have their own instructions on how to do it.
 3. Set the custom domain field in the "Pages" settings of the _website repo_ (automatically creates a `CNAME` file in the repo).
 4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-domain.com`.
+
+#### GitHub user/org site
+
+e.g. `your-org.github.io/some-link`
+
+1. Name your _website repo_ `your-org.github.io`.
+2. Change instances of `redirects-website` in the code as appropriate.
+
+[About GitHub user/org sites](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#types-of-github-pages-sites).
 
 ### Add notes
 
