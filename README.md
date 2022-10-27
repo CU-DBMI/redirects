@@ -115,10 +115,10 @@ Then, a user visiting a link goes like this:
 ### Set up repos
 
 1. [Use the _redirects repo_ (this repo) as a template](../../generate).
-   _Make it private_.
    **Do not fork**, because you cannot make forks private.
+   _Name it `redirects` and make it private_.
 2. [Use the _website repo_ as a template](../../../redirects-website/generate).
-   _Make it public_.
+   _Name it `redirects-website` and make it public_.
 3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
 4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/repo-name`.
 
@@ -143,7 +143,7 @@ When you find the code snippet, paste it into `404.html` where marked (above the
 ### Set up custom domain
 
 By default, GitHub Pages will host your redirects website at a url like `your-org.github.io/repo-name/some-link`.
-To turn this into a nicer `your-domain.com/some-link`, you can set up a custom domain.
+To turn this into a nicer `your-domain.com/some-link`, you need to set up a custom domain.
 
 To do this, [follow the instructions here](https://docs.github.com/en/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site#configuring-an-apex-domain).
 In summary:
