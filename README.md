@@ -115,11 +115,12 @@ Then, a user visiting a link goes like this:
 ### Set up repos
 
 1. [Use the _redirects repo_ (this repo) as a template](../../generate).
+   _Make it private_.
    **Do not fork**, because you cannot make forks private.
-2. [Make it private](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility).
-3. [Use the _website repo_ as a template](../../../redirects-website/generate).
-4. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
-5. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/repo-name`.
+2. [Use the _website repo_ as a template](../../../redirects-website/generate).
+   _Make it public_.
+3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
+4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/repo-name`.
 
 If you ever need to pull in updates from these templates, [see the instructions here](https://stackoverflow.com/questions/56577184/github-pull-changes-from-a-template-repository).
 
