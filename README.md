@@ -142,7 +142,7 @@ When you find the code snippet, paste it into `404.html` where marked (above the
 
 ### Set up domain
 
-By default, GitHub Pages will host your site at `your-org.github.io/redirects-website`, which gets pretty long when you add on `/some-link`.
+By default, GitHub Pages will host your redirects website at `your-org.github.io/redirects-website`, which gets pretty long when you add on `/some-link`.
 You can make this shorter in one of two ways.
 
 Note: If you do either of these, set `baseurl` to `""` in the `redirect.js` script.
@@ -165,7 +165,7 @@ In summary:
 e.g. `your-org.github.io/some-link`
 
 1. Name your _website repo_ `your-org.github.io`.
-3. Change instances of `redirects-website` in the code as appropriate.
+2. Change `redirects-website` in `deploy.yaml` to the same name.
 
 [About GitHub user/org sites](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#types-of-github-pages-sites).
 
