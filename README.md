@@ -120,7 +120,7 @@ Then, a user visiting a link goes like this:
 2. [Use the _website repo_ as a template](../../../redirects-website/generate).
    _Name it `redirects-website` and make it public_.
 3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
-4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-org.github.io/redirects-website`.
+4. After a minute or so, GitHub should tell you that your site is now being hosted at `your-org.github.io/redirects-website`.
 
 If you ever need to pull in updates from these templates, [see the instructions here](https://stackoverflow.com/questions/56577184/github-pull-changes-from-a-template-repository).
 
@@ -140,10 +140,10 @@ For Google Analytics, [those instructions are here](https://support.google.com/a
 
 When you find the code snippet, paste it into `404.html` where marked (above the `redirect.js` script).
 
-### Set up base url
+### Set up domain
 
-By default, GitHub Pages will host your redirects website at a url like `your-org.github.io/repo-name/some-link`.
-You can make this shorter by customizing your base url in one of two ways.
+By default, GitHub Pages will host your site at `your-org.github.io/redirects-website`, which gets pretty long when you add on `/some-link`.
+You can make this shorter in one of two ways.
 
 Note: If you do either of these, set `baseurl` to `""` in the `redirect.js` script.
 
@@ -158,14 +158,14 @@ In summary:
 2. Point your domain name provider to GitHub Pages using an `A` record.
    This is slightly different for each company; they should have their own instructions on how to do it.
 3. Set the custom domain field in the "Pages" settings of the _website repo_ (automatically creates a `CNAME` file in the repo).
-4. After a minute or so, GitHub should tell you that your site is now being hosted at e.g. `your-domain.com`.
+4. After a minute or so, GitHub should tell you that your site is now being hosted at `your-domain.com`.
 
 #### GitHub user/org site
 
 e.g. `your-org.github.io/some-link`
 
 1. Name your _website repo_ `your-org.github.io`.
-2. Change instances of `redirects-website` in the code as appropriate.
+3. Change instances of `redirects-website` in the code as appropriate.
 
 [About GitHub user/org sites](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#types-of-github-pages-sites).
 
@@ -179,7 +179,7 @@ In your _redirects repo_:
 
 In your _website repo_:
 
-- Add a big link to the top of the readme to remind people where your website is hosted, e.g. `your-domain.com` or `your-org.github.io/repo-name`.
+- Add a big link to the top of the readme to remind people where your website is hosted, e.g. `your-domain.com`.
 - In `redirect.js`, customize what happens when a user visits a url that has no matching `from` redirect (fallback action).
 - Add an `index.html` page with some filler content like "_This website just performs redirects for [YOUR ORG]_", in case people go to the root of the website with no e.g. `/some-link`.
 
@@ -188,7 +188,7 @@ In your _website repo_:
 If you already have a website being hosted with GitHub Pages that you want to incorporate this approach into:
 
 1. Skip cloning the _website repo_.
-2. Copy the [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo, and modify its `baseurl` as appropriate.
+2. Copy the [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo, and modify `baseurl` in it as appropriate.
 3. Include it in your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
    If an existing page and a redirect have same name/path, the redirect won't happen since the user won't get a [`404`](https://en.wikipedia.org/wiki/HTTP_404).
 
