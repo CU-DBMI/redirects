@@ -59,7 +59,6 @@ Here's how this approach compares to Bitly and similar services.
 - You're in complete control.
   With a bit of coding knowledge, you can customize it any way you'd like.
   All of the code has detailed comments and is written to be flexible/editable.
-- Redirect happens slightly faster, since it is done "client-side" (in the browser) rather than "server-side".
 
 **The equivalent**:
 
@@ -165,7 +164,7 @@ In summary:
 
 e.g. `your-org.github.io/some-link`
 
-1. Name your _website repo_ `your-org.github.io` to match your user/organization name.
+1. Name your _website repo_ `your-org.github.io` to match your GitHub user/organization name.
 2. In your _redirects repo_, change `redirects-website` in `deploy.yaml` to the same name.
 
 [About GitHub user/org sites](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#types-of-github-pages-sites).
@@ -195,6 +194,6 @@ If you already have a website being hosted with GitHub Pages that you want to in
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
 
-[^1]: Since this approach performs redirects "client-side", your redirect list cannot be _encrypted_, it can only be _obfuscated_ such that it is not searchable or human-readable. Anyone with some coding knowledge could still figure out all of your redirect lists with some effort.
+[^1]: This approach performs redirects "client-side" rather than "server-side". Because of this, your redirect list cannot be _encrypted_, it can only be _obfuscated_ such that it is not searchable or human-readable. Anyone with some coding knowledge could still figure out all of your redirect lists with some effort.
 [^2]: The analytics service you're using _should_ be able to capture all the necessary stats in time, before the redirection happens. But these services are usually closed source, so we can't know for sure exactly how they work. However, in testing with Google Analytics at least, everything seems to be captured fine.
 [^3]: You would need to modify the `deploy.yaml` workflow to be able to commit/push/upload the result to wherever your website is, integrate it into your code as appropriate, and trigger a re-build of your website.
