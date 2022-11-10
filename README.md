@@ -27,8 +27,8 @@ You can think of it like a shortcut.
 
 These services usually offer several other features that you probably want too:
 
-- You can customize the text after the `/`, giving you a url that a human could actually remember and type in manually, like `bit.ly/MyCoolLink` (some call these "back-halves").
-- You can set up a custom domain to brand your links the way you want, giving you an even nicer and easier-to-use link, like `my-website.com/MyCoolLink`.
+- You can customize the text after the `/`, giving you a url that a human could actually remember and type in manually, like `bit.ly/MyCoolLink` (sometimes called "back-halves").
+- You can set up a custom domain to brand your links the way you want, giving you an even nicer link, like `my-website.com/MyCoolLink`.
 - You can see how many and what kinds of people have used the link over time (i.e. analytics).
 
 This all sounds great, so what's the problem?
@@ -59,6 +59,7 @@ Here's how this approach compares to Bitly and similar services.
 - You're in complete control.
   With a bit of coding knowledge, you can customize it any way you'd like.
   All of the code has detailed comments and is written to be flexible/editable.
+- Redirect happens slightly faster, since it is done "client-side" (in the browser) rather than "server-side".
 
 **The equivalent**:
 
@@ -97,7 +98,7 @@ Adding/removing/changing a link goes like this:
 
 1. You change one or more of the `.yaml` files in the _redirects repo_.
 2. `deploy.yaml` tells [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) that any time someone commits a change to the repo, it should automatically run the `encode.js` script.
-3. The `encode.js` script combines all of your `.yaml` files into one, and encodes it into a format that isn't searchable or human-readable[^1].
+3. The `encode.js` script combines all of your `.yaml` files into one, and encodes it[^1].
 4. `deploy.yaml` then tells GitHub to take the result of the `encode.js` script and commit it to the `redirect.js` script in the _website repo_.
 5. In the _website repo_, GitHub Pages detects a change in the `redirect.js` script, and updates the website.
 
@@ -105,7 +106,7 @@ Then, a user visiting a link goes like this:
 
 1. They navigate to a link on the website, e.g. `/chatroom`.
 2. `chatroom.html` isn't a file in the _website repo_, and thus isn't a page on the website, so GitHub loads [`404.html`](https://en.wikipedia.org/wiki/HTTP_404) for the user instead (but preserves the `/chatroom` url).
-   This file immediately runs some scripts.
+   This file immediately runs some scripts:
 3. The analytics code snippet sends[^2] stats like url, IP, date, time, location, etc. off to Google Analytics or whoever.
 4. The `redirect.js` script decodes the redirect lists previously encoded from the _redirects repo_, finds the long url corresponding to "chatroom" (**case-insensitive**), and navigates there instead.
 5. They arrive at the intended destination, e.g. `zoom.us/j/12345abcdef`, with virtually no perceptible delay.
@@ -119,18 +120,18 @@ Then, a user visiting a link goes like this:
    _Name it `redirects` and make it private_.
 2. [Use the _website repo_ as a template](../../../redirects-website/generate).
    _Name it `redirects-website` and make it public_.
-3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on it with the default settings.
+3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on your copied _website repo_ with the default settings.
 4. After a minute or so, GitHub should tell you that your site is now being hosted at `your-org.github.io/redirects-website`.
 
 If you ever need to pull in updates from these templates, [see the instructions here](https://stackoverflow.com/questions/56577184/github-pull-changes-from-a-template-repository).
 
 ### Connect repos
 
-To allow the _redirects repo_ to automatically write to the _website repo_, we need to "connect" them with a deploy key:
+To allow your _redirects repo_ to automatically write to your _website repo_, you need to "connect" them with a deploy key:
 
 1. [Generate an SSH key pair](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key).
-2. In the _redirects repo_, [create a new repository actions secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) named `DEPLOY_KEY`, and paste the private SSH key.
-3. In the _website repo_, [create a new deploy key](https://docs.github.com/en/developers/overview/managing-deploy-keys#setup-2) with write/push access named `DEPLOY_KEY`, and paste the public SSH key.
+2. In your _redirects repo_, [create a new repository actions secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) named `DEPLOY_KEY`, and paste the private SSH key.
+3. In your _website repo_, [create a new deploy key](https://docs.github.com/en/developers/overview/managing-deploy-keys#setup-2) with write/push access named `DEPLOY_KEY`, and paste the public SSH key.
 
 ### Set up analytics
 
@@ -138,14 +139,14 @@ Every analytics service is slightly different, but they should all have a way to
 Find out how to get that for the service you're using.
 For Google Analytics, [those instructions are here](https://support.google.com/analytics/answer/1008080).
 
-When you find the code snippet, paste it into `404.html` where marked (above the `redirect.js` script).
+When you find the code snippet, paste it into `404.html` where marked (above the `redirect.js` script) in your _website repo_.
 
 ### Set up domain
 
 By default, GitHub Pages will host your redirects website at `your-org.github.io/redirects-website`, which gets pretty long when you add on `/some-link`.
 You can make this shorter in one of two ways.
 
-Note: If you do either of these, set `baseurl` to `""` in the `redirect.js` script.
+Note: If you do either of these, set `baseurl = "";` in the `redirect.js` script in your _website repo_.
 
 #### Custom domain
 
@@ -157,15 +158,15 @@ In summary:
 1. Purchase a domain name from a reputable service.
 2. Point your domain name provider to GitHub Pages using an `A` record.
    This is slightly different for each company; they should have their own instructions on how to do it.
-3. Set the custom domain field in the "Pages" settings of the _website repo_ (automatically creates a `CNAME` file in the repo).
+3. Set the custom domain field in the "Pages" settings of your _website repo_ (automatically creates a `CNAME` file in the repo).
 4. After a minute or so, GitHub should tell you that your site is now being hosted at `your-domain.com`.
 
 #### GitHub user/org site
 
 e.g. `your-org.github.io/some-link`
 
-1. Name your _website repo_ `your-org.github.io`.
-2. Change `redirects-website` in `deploy.yaml` to the same name.
+1. Name your _website repo_ `your-org.github.io` to match your user/organization name.
+2. In your _redirects repo_, change `redirects-website` in `deploy.yaml` to the same name.
 
 [About GitHub user/org sites](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#types-of-github-pages-sites).
 
@@ -187,13 +188,13 @@ In your _website repo_:
 
 If you already have a website being hosted with GitHub Pages that you want to incorporate this approach into:
 
-1. Skip cloning the _website repo_.
-2. Copy the [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo, and modify `baseurl` in it as appropriate.
-3. Include it in your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
+1. Skip templating the _website repo_.
+2. Instead, copy its [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo, and modify `baseurl` in it as appropriate.
+3. Include the script in your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
    If an existing page and a redirect have same name/path, the redirect won't happen since the user won't get a [`404`](https://en.wikipedia.org/wiki/HTTP_404).
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
 
-[^1]: This approach does not _encrypt_ your redirect list, it only _obfuscates_ it. Anyone with some coding knowledge could still figure out all of your redirect lists with some effort.
+[^1]: Since this approach performs redirects "client-side", your redirect list cannot be _encrypted_, it can only be _obfuscated_ such that it is not searchable or human-readable. Anyone with some coding knowledge could still figure out all of your redirect lists with some effort.
 [^2]: The analytics service you're using _should_ be able to capture all the necessary stats in time, before the redirection happens. But these services are usually closed source, so we can't know for sure exactly how they work. However, in testing with Google Analytics at least, everything seems to be captured fine.
 [^3]: You would need to modify the `deploy.yaml` workflow to be able to commit/push/upload the result to wherever your website is, integrate it into your code as appropriate, and trigger a re-build of your website.
