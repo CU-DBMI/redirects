@@ -1,10 +1,10 @@
 const { readFileSync, writeFileSync } = require("fs");
 const { resolve } = require("path");
-const glob = require("glob");
+const { globSync } = require("glob");
 const { parse } = require("yaml");
 
 // get yaml files that match glob pattern
-const files = glob.sync("*.y?(a)ml", { cwd: __dirname });
+const files = globSync("*.y?(a)ml", { cwd: __dirname });
 
 log("Files", files);
 

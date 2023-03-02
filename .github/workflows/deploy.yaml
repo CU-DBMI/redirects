@@ -30,7 +30,7 @@ jobs:
           path: website-repo # save in separate sub-folder
 
       - name: Install packages
-        run: npm install glob yaml
+        run: npm install glob@v9 yaml@v2
 
       - name: Run encode script
         run: node ./redirects-repo/encode.js
