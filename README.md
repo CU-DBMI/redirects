@@ -114,10 +114,10 @@ Then, a user visiting a link goes like this:
 
 ### Set up repos
 
-1. [Use the _redirects repo_ (this repo) as a template](../../generate).
+1. [Use the _redirects repo_ (this repo) as a template](https://github.com/CU-DBMI/redirects/generate).
    **Do not fork**, because you cannot make forks private.
    _Name it `redirects` and make it private_.
-2. [Use the _website repo_ as a template](../../../redirects-website/generate).
+2. [Use the _website repo_ as a template](https://github.com/CU-DBMI/redirects-website/generate).
    _Name it `redirects-website` and make it public_.
 3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on your copied _website repo_ with the default settings.
 4. After a minute or so, GitHub should tell you that your site is now being hosted at `your-org.github.io/redirects-website`.
