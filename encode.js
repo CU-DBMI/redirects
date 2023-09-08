@@ -106,7 +106,7 @@ const script = "./website-repo/redirect.js";
 const contents = readFileSync(script, "utf8").toString();
 
 // pattern to extract encoded redirect list from script string
-const regex = /(list\s*=\s*")([A-Za-z0-9+\/=]*)(")/s;
+const regex = /(list\s*=\s*")([A-Za-z0-9+\/=]*)(")/;
 
 // get encoded redirect list currently in script
 const oldEncoded = contents.match(regex)?.[2];
