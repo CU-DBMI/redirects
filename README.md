@@ -12,9 +12,12 @@ _Counterpart to the [redirects-website repo](../../../redirects-website)._
 
 1. Add/change/remove redirect entries in one or more [`.yaml` files in the top folder](../../blob/main/redirects.yaml).
    Note: the `from` field is **case-insensitive**.
-2. Commit the changes to the `main` branch, either directly or with a pull request (recommended so the automatic process can catch errors before the changes go live).
-3. Changes should take effect automatically within a minute or so.
+1. Commit the changes to the `main` branch, either directly or with a pull request (recommended so the automatic process can catch errors before the changes go live).
+1. Changes should take effect automatically within a minute or so.
    Verify that no errors occurred in the automatic process here: [![Encode and deploy](../../actions/workflows/deploy.yaml/badge.svg)](../../actions/workflows/deploy.yaml)
+1. Verify that none of your redirect links are reported broken in the automatic process here: [![Check links](../../actions/workflows/check.yaml/badge.svg)](../../actions/workflows/check.yaml).
+   Note that this is only a **rough check**.
+   There may be false positives and true negatives, as it simply checks the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) of the link, which the third-party site may choose inappropriately.
 
 You can do this [directly on github.com](../../edit/main/redirects.yaml) (tip: press <kbd>.</kbd> right now), or locally with git.
 
@@ -96,19 +99,19 @@ After the one-time setup, **all you have to do is edit the `.yaml` files, and ev
 Adding/removing/changing a link goes like this:
 
 1. You change one or more of the `.yaml` files in the _redirects repo_.
-2. `deploy.yaml` tells [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) that any time someone commits a change to the repo, it should automatically run the `encode.js` script.
-3. The `encode.js` script combines all of your `.yaml` files into one, and encodes it[^1].
-4. `deploy.yaml` then tells GitHub to take the result of the `encode.js` script and commit it to the `redirect.js` script in the _website repo_.
-5. In the _website repo_, GitHub Pages detects a change in the `redirect.js` script, and updates the website.
+1. `deploy.yaml` tells [GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) that any time someone commits a change to the repo, it should automatically run the `encode.js` script.
+1. The `encode.js` script combines all of your `.yaml` files into one, and encodes it[^1].
+1. `deploy.yaml` then tells GitHub to take the result of the `encode.js` script and commit it to the `redirect.js` script in the _website repo_.
+1. In the _website repo_, GitHub Pages detects a change in the `redirect.js` script, and updates the website.
 
 Then, a user visiting a link goes like this:
 
 1. They navigate to a link on the website, e.g. `/chatroom`.
-2. `chatroom.html` isn't a file in the _website repo_, and thus isn't a page on the website, so GitHub loads [`404.html`](https://en.wikipedia.org/wiki/HTTP_404) for the user instead (but preserves the `/chatroom` url).
+1. `chatroom.html` isn't a file in the _website repo_, and thus isn't a page on the website, so GitHub loads [`404.html`](https://en.wikipedia.org/wiki/HTTP_404) for the user instead (but preserves the `/chatroom` url).
    This file immediately runs some scripts:
-3. The analytics code snippet sends[^2] stats like url, IP, date, time, location, etc. off to Google Analytics or whoever.
-4. The `redirect.js` script decodes the redirect lists previously encoded from the _redirects repo_, finds the long url corresponding to "chatroom" (**case-insensitive**), and navigates there instead.
-5. They arrive at the intended destination, e.g. `zoom.us/j/12345abcdef`, with virtually no perceptible delay.
+1. The analytics code snippet sends[^2] stats like url, IP, date, time, location, etc. off to Google Analytics or whoever.
+1. The `redirect.js` script decodes the redirect lists previously encoded from the _redirects repo_, finds the long url corresponding to "chatroom" (**case-insensitive**), and navigates there instead.
+1. They arrive at the intended destination, e.g. `zoom.us/j/12345abcdef`, with virtually no perceptible delay.
 
 ## Setup
 
@@ -117,10 +120,10 @@ Then, a user visiting a link goes like this:
 1. [Use the _redirects repo_ (this repo) as a template](https://github.com/CU-DBMI/redirects/generate).
    **Do not fork**, because you cannot make forks private.
    _Name it `redirects` and make it private_.
-2. [Use the _website repo_ as a template](https://github.com/CU-DBMI/redirects-website/generate).
+1. [Use the _website repo_ as a template](https://github.com/CU-DBMI/redirects-website/generate).
    _Name it `redirects-website` and make it public_.
-3. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on your copied _website repo_ with the default settings.
-4. After a minute or so, GitHub should tell you that your site is now being hosted at `your-org.github.io/redirects-website`.
+1. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on your copied _website repo_ with the default settings.
+1. After a minute or so, GitHub should tell you that your site is now being hosted at `your-org.github.io/redirects-website`.
 
 If you ever need to pull in updates from these templates, [see the instructions here](https://stackoverflow.com/questions/56577184/github-pull-changes-from-a-template-repository).
 
@@ -129,8 +132,8 @@ If you ever need to pull in updates from these templates, [see the instructions 
 To allow your _redirects repo_ to automatically write to your _website repo_, you need to "connect" them with a deploy key:
 
 1. [Generate an SSH key pair](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent#generating-a-new-ssh-key).
-2. In your _redirects repo_, [create a new repository actions secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) named `DEPLOY_KEY`, and paste the private SSH key.
-3. In your _website repo_, [create a new deploy key](https://docs.github.com/en/developers/overview/managing-deploy-keys#setup-2) with write/push access named `DEPLOY_KEY`, and paste the public SSH key.
+1. In your _redirects repo_, [create a new repository actions secret](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository) named `DEPLOY_KEY`, and paste the private SSH key.
+1. In your _website repo_, [create a new deploy key](https://docs.github.com/en/developers/overview/managing-deploy-keys#setup-2) with write/push access named `DEPLOY_KEY`, and paste the public SSH key.
 
 ### Set up analytics
 
@@ -155,17 +158,17 @@ e.g. `your-domain.com/some-link`
 In summary:
 
 1. Purchase a domain name from a reputable service.
-2. Point your domain name provider to GitHub Pages using an `A` record.
+1. Point your domain name provider to GitHub Pages using an `A` record.
    This is slightly different for each company; they should have their own instructions on how to do it.
-3. Set the custom domain field in the "Pages" settings of your _website repo_ (automatically creates a `CNAME` file in the repo).
-4. After a minute or so, GitHub should tell you that your site is now being hosted at `your-domain.com`.
+1. Set the custom domain field in the "Pages" settings of your _website repo_ (automatically creates a `CNAME` file in the repo).
+1. After a minute or so, GitHub should tell you that your site is now being hosted at `your-domain.com`.
 
 #### GitHub user/org site
 
 e.g. `your-org.github.io/some-link`
 
 1. Name your _website repo_ `your-org.github.io` to match your GitHub user/organization name.
-2. In your _redirects repo_, change `redirects-website` in `deploy.yaml` to the same name.
+1. In your _redirects repo_, change `redirects-website` in `deploy.yaml` to the same name.
 
 [About GitHub user/org sites](https://docs.github.com/en/pages/getting-started-with-github-pages/about-github-pages#types-of-github-pages-sites).
 
@@ -188,8 +191,8 @@ In your _website repo_:
 If you already have a website being hosted with GitHub Pages that you want to incorporate this approach into:
 
 1. Skip templating the _website repo_.
-2. Instead, copy its [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo, and modify `baseurl` in it as appropriate.
-3. Include the script in your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
+1. Instead, copy its [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the **top folder** of your existing website repo, and modify `baseurl` in it as appropriate.
+1. Include the script in your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
    If an existing page and a redirect have same name/path, the redirect won't happen since the user won't get a [`404`](https://en.wikipedia.org/wiki/HTTP_404).
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
