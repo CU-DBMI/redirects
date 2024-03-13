@@ -102,9 +102,9 @@ export function addError(error) {
 export function onExit() {
   process.on("exit", () => {
     if (errors.length) {
-      process.exitCode = 1;
       errors.forEach(logError);
       logError(`${errors.length} error(s)`);
+      process.exit(1);
     } else {
       process.exitCode = 0;
       log("No errors!");
