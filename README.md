@@ -17,7 +17,7 @@ _Counterpart to the [redirects-website repo](../../../redirects-website)._
    Verify that no errors occurred in the automatic process here: [![Encode and deploy](../../actions/workflows/deploy.yaml/badge.svg)](../../actions/workflows/deploy.yaml)
 1. Verify that none of your redirect links are reported broken in the automatic process here: [![Check links](../../actions/workflows/check.yaml/badge.svg)](../../actions/workflows/check.yaml).
    Note that this is only a **rough check**.
-   There may be false positives and true negatives, as it simply checks the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) of the link, which the third-party site may choose inappropriately.
+   There _may be false positives or true negatives_, as it simply checks the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) of the link, which the third-party may choose inappropriately.
 
 You can do this [directly on github.com](../../edit/main/redirects.yaml) (tip: press <kbd>.</kbd> right now), or locally with git.
 
