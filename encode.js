@@ -1,136 +1,47 @@
-const { readFileSync, writeFileSync } = require("fs");
-const { resolve } = require("path");
-const { globSync } = require("glob");
-const { parse } = require("yaml");
+import { readFileSync, writeFileSync } from "fs";
+import { addError, getList, onExit, verbose } from "./core";
 
-// collect (caught) errors to report at end
-const errors = [];
+onExit();
 
-// report errors on exit
-process.on("exit", () => {
-  errors.forEach(error);
-  if (errors.length) error(`${errors.length} error(s)`);
-});
+// encode list of redirects into redirect script
+function encodeList(list) {
+  // encode redirect list to base64 to obfuscate
+  const encoded = Buffer.from(JSON.stringify(list)).toString("base64");
 
-// if running in github actions debug mode, do extra logging
-const verbose = !!process.env.RUNNER_DEBUG;
+  if (verbose) log("Encoded redirects list", encoded);
 
-// get yaml files that match glob pattern
-const files = globSync("*.y?(a)ml", { cwd: __dirname });
+  // redirect script from website repo
+  const script = "./website-repo/redirect.js";
 
-log("Files", files.join(" "));
-
-// start combined list of redirects
-const list = [];
-
-// keep track of duplicate entries
-const duplicates = {};
-
-// go through each yaml file
-for (const file of files) {
-  // load file contents
-  const contents = readFileSync(resolve(__dirname, file), "utf8");
-
-  // try to parse as yaml
-  let data;
+  // load contents of script
+  let contents = "";
   try {
-    data = parse(contents);
+    contents = readFileSync(script, "utf8").toString();
   } catch (error) {
-    errors.push(`Couldn't parse ${file}. Make sure it is valid YAML.`);
-    continue;
+    addError(`Couldn't find script file at ${script}`);
   }
 
-  // check if top level is list
-  if (!Array.isArray(data)) {
-    errors.push(`${file} is not a list`);
-    continue;
-  }
+  // pattern to extract encoded redirect list from script string
+  const regex = /(list\s*=\s*")([A-Za-z0-9+\/=]*)(")/;
 
-  // go through each entry
-  for (let [index, entry] of Object.entries(data)) {
-    index = Number(index) + 1;
-    const trace = `${file} entry ${index}`;
+  // get encoded redirect list currently in script
+  const oldEncoded = contents.match(regex)?.[2];
 
-    // check if dict
-    if (typeof entry !== "object") {
-      errors.push(`${trace} is not a dict`);
-      continue;
-    }
+  if (verbose) log("Old encoded redirects list", oldEncoded);
 
-    // check "from" field
-    if (!(typeof entry.from === "string" && entry.from.trim())) {
-      errors.push(`${trace} "from" field invalid`);
-      continue;
-    }
+  // check that we could find it (and thus can replace it)
+  if (typeof oldEncoded !== "string")
+    addError("Couldn't find encoded redirects list in redirect script");
 
-    // check "to" field
-    if (!(typeof entry.to === "string" && entry.to.trim()))
-      errors.push(`${trace} "to" field invalid`);
+  // update encoded string in script
+  const newContents = contents.replace(regex, "$1" + encoded + "$3");
 
-    // normalize "from" field. lower case, remove leading slashes.
-    entry.from = entry.from.toLowerCase().replace(/^(\/+)/, "");
-
-    // add to combined list
-    list.push(entry);
-
-    // add to duplicate list. record source file and entry number for logging.
-    duplicates[entry.from] ??= [];
-    duplicates[entry.from].push({ ...entry, file, index });
+  // write updated redirect script to website repo
+  try {
+    writeFileSync(script, newContents, "utf-8");
+  } catch (error) {
+    addError(`Couldn't write script file to ${script}`);
   }
 }
 
-// check that any redirects exist
-if (!list.length) errors.push("No redirects");
-
-if (verbose) log("Combined redirects list", list);
-
-// trigger errors for duplicates
-for (const [from, entries] of Object.entries(duplicates)) {
-  const count = entries.length;
-  if (count <= 1) continue;
-  const duplicates = entries
-    .map(({ file, index }) => `\n    ${file} entry ${index}`)
-    .join("");
-  errors.push(`"from: ${from}" appears ${count} time(s): ${duplicates}`);
-}
-
-// encode redirect list to base64 to obfuscate
-const encoded = Buffer.from(JSON.stringify(list)).toString("base64");
-
-if (verbose) log("Encoded redirects list", encoded);
-
-// redirect script from website repo
-const script = "./website-repo/redirect.js";
-
-// load contents of script
-const contents = readFileSync(script, "utf8").toString();
-
-// pattern to extract encoded redirect list from script string
-const regex = /(list\s*=\s*")([A-Za-z0-9+\/=]*)(")/;
-
-// get encoded redirect list currently in script
-const oldEncoded = contents.match(regex)?.[2];
-
-if (verbose) log("Old encoded redirects list", oldEncoded);
-
-// check that we could find it (and thus can replace it)
-if (typeof oldEncoded !== "string")
-  errors.push("Couldn't find encoded redirects list in redirect script");
-
-// update encoded string in script
-const newContents = contents.replace(regex, "$1" + encoded + "$3");
-
-// write updated redirect script to website repo
-writeFileSync(script, newContents, "utf-8");
-
-// exit if collected errors
-if (errors.length) process.exit(1);
-
-// debug util
-function log(message, data) {
-  console.info("\033[1m\033[96m" + message + "\033[0m");
-  console.log(data);
-}
-function error(message) {
-  console.error("\033[1m\033[91m" + message + "\033[0m");
-}
+encodeList(getList());

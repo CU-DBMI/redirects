@@ -1,0 +1,36 @@
+name: Check links
+
+on:
+  # when someone makes a change directly to main branch
+  push:
+    branches:
+      - main
+  # when someone requests a change to main branch
+  pull_request:
+    branches:
+      - main
+
+  # run periodically
+  schedule:
+    - cron: "0 0 * * *"
+  # run manually
+  workflow_dispatch:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - if: runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+
+      - name: Get this repo's code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+
+      - name: Install packages
+        run: bun install glob@v9 yaml@v2
+
+      - name: Run check script
+        run: bun ./check.js

@@ -15,25 +15,30 @@ env:
 
 jobs:
   encode:
-    name: Encode and deploy
     runs-on: ubuntu-latest
     steps:
+      - if: runner.debug == '1'
+        uses: mxschmitt/action-tmate@v3
+
       - name: Get this repo's code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           path: redirects-repo # save in separate sub-folder
 
       - name: Get website repo's code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: ${{ github.repository_owner }}/${{ env.website_repo }} # assume same user/org
           path: website-repo # save in separate sub-folder
 
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+
       - name: Install packages
-        run: npm install glob@v9 yaml@v2
+        run: bun install glob@v9 yaml@v2
 
       - name: Run encode script
-        run: node ./redirects-repo/encode.js
+        run: bun ./redirects-repo/encode.js
 
       - name: Commit result to website repo
         if: ${{ github.event_name == 'push' }}
