@@ -6,7 +6,7 @@ onExit();
 async function checkList(list) {
   return await Promise.all(
     // for each redirect
-    list.map(async ({ to }) => {
+    list.map(async ({ to, file, index }) => {
       try {
         // do simple request to target url
         const response = await fetch(to);
@@ -19,10 +19,12 @@ async function checkList(list) {
         )
           throw Error(response.status);
       } catch (error) {
-        addError(`"to: ${to}" may be a broken link\n(${error})`);
+        addError(
+          `${file} entry ${index} "to: ${to}" may be a broken link\n    (${error})`
+        );
       }
     })
   );
 }
 
-await checkList(getList());
+await checkList(getList(true));

@@ -7,7 +7,7 @@ import { parse } from "yaml";
 export const verbose = !!process.env.RUNNER_DEBUG;
 
 // get full list of redirects
-export function getList() {
+export function getList(meta) {
   // get yaml files that match glob pattern
   const files = globSync("*.y?(a)ml", { cwd: __dirname });
 
@@ -63,12 +63,16 @@ export function getList() {
       // normalize "from" field. lower case, remove leading slashes.
       entry.from = entry.from.toLowerCase().replace(/^(\/+)/, "");
 
+      // record meta for logging
+      entry.file = file;
+      entry.index = index;
+
       // add to combined list
       list.push(entry);
 
-      // add to duplicate list. record source file and entry number for logging.
+      // add to duplicate list
       duplicates[entry.from] ??= [];
-      duplicates[entry.from].push({ ...entry, file, index });
+      duplicates[entry.from].push(entry);
     }
   }
 
@@ -86,6 +90,13 @@ export function getList() {
       .join("");
     addError(`"from: ${from}" appears ${count} time(s): ${duplicates}`);
   }
+
+  // if meta not requested, clean up
+  if (!meta)
+    list.forEach((entry) => {
+      delete entry.file;
+      delete entry.index;
+    });
 
   return list;
 }
