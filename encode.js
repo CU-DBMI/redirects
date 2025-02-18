@@ -42,7 +42,6 @@ function encodeList(list) {
   // check that we could find it (and thus can replace it)
   if (typeof oldEncoded !== "string") {
     addError("Couldn't find encoded list in script file");
-    return;
   }
 
   // update encoded string in script
@@ -53,7 +52,6 @@ function encodeList(list) {
     writeFileSync(script, newContents, "utf-8");
   } catch (e) {
     addError(`Couldn't write script file to ${script}`);
-    return;
   }
 }
 
