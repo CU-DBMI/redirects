@@ -2,25 +2,28 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 import { globSync } from "glob";
 import { parse } from "yaml";
+import chalk from "chalk";
 
 // if running in github actions debug mode, do extra logging
 export const verbose = !!process.env.RUNNER_DEBUG;
 
-// get full list of redirects
-export function getList(meta) {
+// get lists of redirects
+export function getLists() {
   // get yaml files that match glob pattern
   const files = globSync("*.y?(a)ml", { cwd: __dirname });
 
-  log("Files", files.join(" "));
+  info(`Found ${files.length} list file(s)`);
 
-  // start combined list of redirects
-  const list = [];
+  // lists of redirects
+  const lists = {};
 
   // keep track of duplicate entries
   const duplicates = {};
 
   // go through each yaml file
   for (const file of files) {
+    debug("  " + file);
+
     // load file contents
     const contents = readFileSync(resolve(__dirname, file), "utf8");
 
@@ -28,108 +31,129 @@ export function getList(meta) {
     let data;
     try {
       data = parse(contents);
-    } catch (error) {
-      addError(`Couldn't parse ${file}. Make sure it is valid YAML.`);
+    } catch (e) {
+      addError("Couldn't parse file. Make sure it is valid YAML.");
       continue;
     }
 
     // check if top level is list
     if (!Array.isArray(data)) {
-      addError(`${file} is not a list`);
+      addError("File is not a list");
       continue;
     }
 
     // go through each entry
-    for (let [index, entry] of Object.entries(data)) {
-      index = Number(index) + 1;
-      const trace = `${file} entry ${index}`;
+    for (let index = 0; index < data.length; index++) {
+      // get entry
+      let entry = data[index];
 
       // check if dict
-      if (typeof entry !== "object") {
-        addError(`${trace} is not a dict`);
+      if (typeof entry !== "object" || Array.isArray(entry) || entry === null) {
+        addError(["Entry is not a dict", JSON.stringify(entry)]);
         continue;
       }
 
-      // check "from" field
-      if (!(typeof entry.from === "string" && entry.from.trim())) {
-        addError(`${trace} "from" field invalid`);
-        continue;
-      }
-
-      // check "to" field
-      if (!(typeof entry.to === "string" && entry.to.trim()))
-        addError(`${trace} "to" field invalid`);
-
-      // normalize "from" field. lower case, remove leading slashes.
-      entry.from = entry.from.toLowerCase().replace(/^(\/+)/, "");
-
-      // record meta for logging
+      // add metadata
       entry.file = file;
       entry.index = index;
 
-      // add to combined list
-      list.push(entry);
+      const { from, to } = entry;
+
+      // check "from" field
+      if (!(typeof from === "string" && from.trim())) {
+        addError([
+          `"from" field ${from === undefined ? "missing" : "invalid"}`,
+          trace(entry),
+        ]);
+        continue;
+      }
+
+      // normalize "from" field. lower case, remove leading slashes.
+      entry.from = from.toLowerCase().replace(/^(\/+)/, "");
 
       // add to duplicate list
-      duplicates[entry.from] ??= [];
-      duplicates[entry.from].push(entry);
+      duplicates[from] ??= [];
+      duplicates[from].push(entry);
+
+      // check "to" field
+      if (!(typeof to === "string" && to.trim())) {
+        addError([
+          `"to" field ${to === undefined ? "missing" : "invalid"}`,
+          trace(entry),
+        ]);
+        continue;
+      }
+
+      // add to lists
+      lists[file] ??= [];
+      lists[file].push(entry);
     }
   }
 
+  // total count of redirect entries
+  const count = Object.values(lists).flat().length;
+
   // check that any redirects exist
-  if (!list.length) addError("No redirects");
+  (count ? info : addError)(`Found ${count} total entr(ies)`);
 
-  if (verbose) log("Combined redirects list", list);
-
-  // trigger errors for duplicates
-  for (const [from, entries] of Object.entries(duplicates)) {
-    const count = entries.length;
-    if (count <= 1) continue;
-    const duplicates = entries
-      .map(({ file, index }) => `\n    ${file} entry ${index}`)
-      .join("");
-    addError(`"from: ${from}" appears ${count} time(s): ${duplicates}`);
+  if (verbose) {
+    info("Combined list");
+    debug(JSON.stringify(lists));
   }
 
-  // if meta not requested, clean up
-  if (!meta)
-    list.forEach((entry) => {
-      delete entry.file;
-      delete entry.index;
-    });
+  // go through duplicates
+  for (const [, entries] of Object.entries(duplicates)) {
+    if (entries.length <= 1) continue;
+    addError([`"from" appears ${entries.length} times`, ...entries.map(trace)]);
+  }
 
-  return list;
-}
-
-// collect (caught) errors to report at end
-const errors = [];
-
-// add error
-export function addError(error) {
-  errors.push(error);
+  return lists;
 }
 
 // when script finished, report all errors together
 export function onExit() {
   process.on("exit", () => {
     if (errors.length) {
-      errors.forEach(logError);
-      logError(`${errors.length} error(s)`);
+      critical(`${errors.length} error(s) occurred:`);
+      for (const [firstLine, ...lines] of errors) {
+        error(firstLine);
+        for (const line of lines) debug("  " + line);
+      }
       process.exit(1);
     } else {
+      success("Done");
       process.exitCode = 0;
-      log("No errors!");
     }
   });
 }
 
-// formatted normal log
-export function log(message, data) {
-  console.info("\x1b[1m\x1b[96m" + message + "\x1b[0m");
-  if (data) console.log(data);
+// track errors
+let errors = [];
+export function addError(value) {
+  errors.push([value].flat());
 }
 
-// formatted error log
-export function logError(message) {
-  console.error("\x1b[1m\x1b[91m" + message + "\x1b[0m");
+// colored logs
+export function info(message) {
+  console.log(chalk.cyan(message));
+}
+export function debug(message) {
+  console.log(chalk.gray(message));
+}
+export function warning(message) {
+  console.log(chalk.yellow(message));
+}
+export function error(message) {
+  console.log(chalk.red(message));
+}
+export function success(message) {
+  console.log(chalk.bgGreen(message));
+}
+export function critical(message) {
+  console.log(chalk.bgRed(message));
+}
+
+// log info for identifying bad entries
+export function trace({ file, index, ...entry }) {
+  return `${file} entry #${index + 1} ${JSON.stringify(entry)}`;
 }

@@ -1,14 +1,23 @@
 import { readFileSync, writeFileSync } from "fs";
-import { addError, getList, onExit, verbose } from "./core";
+import { addError, debug, getLists, info, onExit, verbose } from "./core";
 
 onExit();
 
-// encode list of redirects into redirect script
-function encodeList(list) {
-  // encode redirect list to base64 to obfuscate
-  const encoded = Buffer.from(JSON.stringify(list)).toString("base64");
+// encode lists of redirects into redirect script
+function encodeLists(lists) {
+  // combine lists
+  const combined = Object.values(lists)
+    .flat()
+    // only keep non-essential/debug fields
+    .map(({ from, to }) => ({ from, to }));
 
-  if (verbose) log("Encoded redirects list", encoded);
+  // encode redirect list to base64 to obfuscate
+  const encoded = Buffer.from(JSON.stringify(combined)).toString("base64");
+
+  if (verbose) {
+    info("Encoded list");
+    debug(encoded);
+  }
 
   // redirect script from website repo
   const script = "./website-repo/redirect.js";
@@ -17,8 +26,9 @@ function encodeList(list) {
   let contents = "";
   try {
     contents = readFileSync(script, "utf8").toString();
-  } catch (error) {
+  } catch (e) {
     addError(`Couldn't find script file at ${script}`);
+    return;
   }
 
   // pattern to extract encoded redirect list from script string
@@ -27,11 +37,16 @@ function encodeList(list) {
   // get encoded redirect list currently in script
   const oldEncoded = contents.match(regex)?.[2];
 
-  if (verbose) log("Old encoded redirects list", oldEncoded);
+  if (verbose) {
+    info("Old encoded list");
+    debug(oldEncoded);
+  }
 
   // check that we could find it (and thus can replace it)
-  if (typeof oldEncoded !== "string")
-    addError("Couldn't find encoded redirects list in redirect script");
+  if (typeof oldEncoded !== "string") {
+    addError("Couldn't find encoded list in script file");
+    return;
+  }
 
   // update encoded string in script
   const newContents = contents.replace(regex, "$1" + encoded + "$3");
@@ -39,9 +54,10 @@ function encodeList(list) {
   // write updated redirect script to website repo
   try {
     writeFileSync(script, newContents, "utf-8");
-  } catch (error) {
+  } catch (e) {
     addError(`Couldn't write script file to ${script}`);
+    return;
   }
 }
 
-encodeList(getList());
+encodeLists(getLists());
