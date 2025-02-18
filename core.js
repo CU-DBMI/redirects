@@ -7,23 +7,21 @@ import chalk from "chalk";
 // if running in github actions debug mode, do extra logging
 export const verbose = !!process.env.RUNNER_DEBUG;
 
-// get lists of redirects
-export function getLists() {
+// get full list of redirects
+export function getList() {
   // get yaml files that match glob pattern
   const files = globSync("*.y?(a)ml", { cwd: __dirname });
 
   info(`Found ${files.length} list file(s)`);
 
-  // lists of redirects
-  const lists = {};
+  // list of redirects
+  const list = [];
 
   // keep track of duplicate entries
   const duplicates = {};
 
   // go through each yaml file
   for (const file of files) {
-    debug("  " + file);
-
     // load file contents
     const contents = readFileSync(resolve(__dirname, file), "utf8");
 
@@ -32,13 +30,13 @@ export function getLists() {
     try {
       data = parse(contents);
     } catch (e) {
-      addError("Couldn't parse file. Make sure it is valid YAML.");
+      addError(`Couldn't parse ${file}. Make sure it is valid YAML.`);
       continue;
     }
 
     // check if top level is list
     if (!Array.isArray(data)) {
-      addError("File is not a list");
+      addError(`${file} is not a list`);
       continue;
     }
 
@@ -84,21 +82,17 @@ export function getLists() {
         continue;
       }
 
-      // add to lists
-      lists[file] ??= [];
-      lists[file].push(entry);
+      // add to list
+      list.push(entry);
     }
   }
 
-  // total count of redirect entries
-  const count = Object.values(lists).flat().length;
-
   // check that any redirects exist
-  (count ? info : addError)(`Found ${count} total entr(ies)`);
+  (list.length ? info : addError)(`Found ${list.length} total entr(ies)`);
 
   if (verbose) {
     info("Combined list");
-    debug(JSON.stringify(lists));
+    debug(JSON.stringify(list));
   }
 
   // go through duplicates
@@ -107,7 +101,7 @@ export function getLists() {
     addError([`"from" appears ${entries.length} times`, ...entries.map(trace)]);
   }
 
-  return lists;
+  return list;
 }
 
 // when script finished, report all errors together

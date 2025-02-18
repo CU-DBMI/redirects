@@ -1,4 +1,4 @@
-import { addError, getLists, onExit, trace } from "./core";
+import { addError, getList, onExit, trace } from "./core";
 
 onExit();
 
@@ -9,30 +9,24 @@ const statuses = [
 ];
 
 // check list of redirects for broken links
-async function checkBroken(lists) {
+async function checkBroken(list) {
+  // for each redirect
   return await Promise.all(
-    // for each redirect file
-    Object.entries(lists)
-      .map(([, list]) =>
-        // for each redirect
-        list.map(async (entry) => {
-          try {
-            // do simple request to target url
-            const response = await fetch(entry.to);
-            if (statuses.includes(response.status))
-              throw Error(response.status);
-          } catch (error) {
-            addError([
-              `"to" may be a broken link`,
-              `to: ${entry.to}`,
-              error,
-              trace(entry),
-            ]);
-          }
-        })
-      )
-      .flat()
+    list.map(async (entry) => {
+      try {
+        // do simple request to target url
+        const response = await fetch(entry.to);
+        if (statuses.includes(response.status)) throw Error(response.status);
+      } catch (error) {
+        addError([
+          `"to" may be a broken link`,
+          `to: ${entry.to}`,
+          error,
+          trace(entry),
+        ]);
+      }
+    })
   );
 }
 
-await checkBroken(getLists());
+await checkBroken(getList());

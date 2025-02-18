@@ -1,18 +1,15 @@
 import { readFileSync, writeFileSync } from "fs";
-import { addError, debug, getLists, info, onExit, verbose } from "./core";
+import { addError, debug, getList, info, onExit, verbose } from "./core";
 
 onExit();
 
-// encode lists of redirects into redirect script
-function encodeLists(lists) {
-  // combine lists
-  const combined = Object.values(lists)
-    .flat()
-    // only keep non-essential/debug fields
-    .map(({ from, to }) => ({ from, to }));
+// encode list of redirects into redirect script
+function encodeList(list) {
+  // only keep non-essential/debug fields
+  list = list.map(({ from, to }) => ({ from, to }));
 
   // encode redirect list to base64 to obfuscate
-  const encoded = Buffer.from(JSON.stringify(combined)).toString("base64");
+  const encoded = Buffer.from(JSON.stringify(list)).toString("base64");
 
   if (verbose) {
     info("Encoded list");
@@ -60,4 +57,4 @@ function encodeLists(lists) {
   }
 }
 
-encodeLists(getLists());
+encodeList(getList());
