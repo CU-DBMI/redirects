@@ -34,5 +34,5 @@ jobs:
       - name: Install packages
         run: bun install glob@v11 yaml@v2 chalk@v5
 
-      - name: Run broken check script
+      - name: Run check script
         run: bun ./check-broken.js
