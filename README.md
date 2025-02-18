@@ -92,9 +92,40 @@ You can set this website up at a custom domain to make your links shorter and ni
 
 After the one-time setup, **all you have to do is edit the `.yaml` files, and everything else updates automatically**, within a minute or so.
 
-<p align="center">
-  <img height="300" src="https://user-images.githubusercontent.com/8326331/197649364-90e041a9-397f-4242-b27a-2889793b6dcd.jpg?raw=true" alt="Diagram of this approach. Explained in text form below.">
-</p>
+```mermaid
+flowchart
+  subgraph s1["🔐 Redirects Repo"]
+    n1("📝 redirects.yaml"):::node
+    n2("🤖 deploy.yaml"):::node
+    n3("⚙️ encode.js"):::node
+  end
+  subgraph s2["🌐 Website Repo"]
+    n4("⚙️ redirect.js"):::node
+    n5("📃 404.html"):::node
+  end
+  subgraph s3["your-domain.com"]
+    direction TB
+    n6("🌐 your-domain.com/chatroom"):::node
+    n7("😵 404.html"):::node
+    n8("⚙️ analytics snippet 📊"):::node
+    n9("⚙️ redirect.js"):::node
+    n10("🏁 zoom.us/j/abcedf123456"):::node
+  end
+  s1:::group
+  s2:::group
+  s3:::group
+  n1 --- n2
+  n2 --- n3
+  n6 --- n7
+  n7 --- n8
+  n8 --- n9
+  n9 --- n10
+  n3 ---|"🔣 obfuscate"| n4
+  s2 ---|"🤖 publish"| s3
+  classDef group color:black,stroke-width:0px,fill:#f0f0f0
+  classDef node color:black,stroke-width:0px,fill:#e0e0e0
+  linkStyle default color:black,stroke:black
+```
 
 Adding/removing/changing a link goes like this:
 
