@@ -13,6 +13,7 @@ on:
 
 env:
   website_repo: redirects-website
+  FORCE_COLOR: true
 
 jobs:
   encode:
