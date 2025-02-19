@@ -237,6 +237,13 @@ If you already have a website being hosted with GitHub Pages that you want to in
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
 
-[^1]: This approach performs redirects "client-side" rather than "server-side". Because of this, your redirect list cannot be _encrypted_, it can only be _obfuscated_ such that it is not searchable or human-readable. Anyone with some coding knowledge could still figure out all of your redirect lists with some effort.
-[^2]: The analytics service you're using _should_ be able to capture all the necessary stats in time, before the redirection happens. Google Analytics has been tested and seems to work, but these services are usually closed source, so we can't know for sure.
+[^1]:
+    This approach performs redirects "client-side" rather than "server-side".
+    Because of this, your redirect list cannot be _encrypted_, it can only be _obfuscated_ such that it is not searchable or human-readable.
+    Anyone with some coding knowledge could still figure out all of your redirect lists with some effort.
+
+[^2]:
+    The analytics service you're using _should_ be able to capture all its stats in time, before the redirection happens.
+    Google Analytics has been tested and seems to work, but these services are usually closed source, so we can't say for certain that all services will work 100% correctly 100% of the time.
+
 [^3]: You would need to modify the `deploy.yaml` workflow to be able to commit/push/upload the result to wherever your website is, integrate it into your code as appropriate, and trigger a re-build of your website.

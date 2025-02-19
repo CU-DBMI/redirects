@@ -47,7 +47,7 @@ export function getList() {
 
       // check if dict
       if (typeof entry !== "object" || Array.isArray(entry) || entry === null) {
-        addError(["Entry is not a dict", JSON.stringify(entry)]);
+        addError(["Entry is not a dict", trace({ file, index, entry })]);
         continue;
       }
 

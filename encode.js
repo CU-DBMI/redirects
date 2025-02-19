@@ -5,7 +5,7 @@ onExit();
 
 // encode list of redirects into redirect script
 function encodeList(list) {
-  // only keep non-essential/debug fields
+  // only keep essential fields
   list = list.map(({ from, to }) => ({ from, to }));
 
   // encode redirect list to base64 to obfuscate

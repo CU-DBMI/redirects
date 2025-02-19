@@ -17,11 +17,11 @@ async function checkBroken(list) {
         // do simple request to target url
         const response = await fetch(entry.to);
         if (statuses.includes(response.status)) throw Error(response.status);
-      } catch (error) {
+      } catch (e) {
         addError([
           `"to" may be a broken link`,
           `to: ${entry.to}`,
-          error,
+          e,
           trace(entry),
         ]);
       }
