@@ -2,24 +2,31 @@
 
 _Counterpart to the [redirects-website repo](../../../redirects-website)._
 
+👁️ [Overview](#overview)  
 ✏️ [How to edit](#how-to-edit)  
 💡 [Motivation](#motivation)  
 ✔️ [Comparison](#comparison)  
 🧠 [How it works](#how-it-works)  
 ⚙️ [Setup](#setup)
 
+## Overview
+
+A free(er), DIY(-ish) alternative to [URL shortening services](https://en.wikipedia.org/wiki/URL_shortening) such as Bitly.
+
+The **target audience** for this approach is **people/organizations who use [Git](https://en.wikipedia.org/wiki/Git), [GitHub](https://en.wikipedia.org/wiki/GitHub), and [YAML](https://en.wikipedia.org/wiki/YAML)**.
+If you are not familiar with these, this is likely not for you.
+
 ## How to edit
 
 1. Add/change/remove redirect entries in one or more [`.yaml` files in the top folder of this repo](../../blob/main/redirects.yaml).
-   You can do this [directly on github.com](../../edit/main/redirects.yaml) (tip: press <kbd>.</kbd> right now), or locally with git.
-1. Each entry should have a `from` and `to` field.
-   `from` is the short/visited URL you want to redirect from (**case-insensitive**), e.g. `/some-link`, and `to` is the longer/destination URL you want to redirect to, e.g. `https://zoom.us/j/12345abcdef`.
-1. Commit the changes to the `main` branch, either directly or with a pull request (recommended so that automatic processes can catch errors before the changes go live).
+   Tip: press <kbd>.</kbd> on GitHub to edit.
+1. Each entry should have a `from` field, the short/visited URL (**case-insensitive**) you want to redirect from (e.g. `/some-link`), and a `to` field, the longer/destination URL you want to redirect to (e.g. `https://zoom.us/j/12345abcdef`).
+1. Commit the changes to the `main` branch, either directly or preferably with a pull request so that automatic processes can catch errors before changes go live.
 1. Changes should take effect automatically within a minute or so.
    Verify that no errors occurred in the automatic process here: [![Encode and deploy](../../actions/workflows/deploy.yaml/badge.svg)](../../actions/workflows/deploy.yaml)
 1. Verify that none of your `to` links are reported broken in the automatic process here: [![Check links](../../actions/workflows/check.yaml/badge.svg)](../../actions/workflows/check.yaml).
    Note: this is only a **rough check**.
-   There _may be false positives or true negatives_, as it simply checks the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) of the link, which the third-party may choose inappropriately.
+   There _may be false positives/negatives_, as it simply checks the [status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) of the link, which the third-party may choose inappropriately.
 
 ## Motivation
 
@@ -40,7 +47,7 @@ Bitly, the de facto standard, [is especially quite expensive](https://bitly.com/
 While you may be able to find one that gives you most or all of what you want for free right now, free plans have generally become more and more limited over time.
 
 Paying for a plan may not be a problem for you, especially if you value the convenience of having a simple service that handles everything automatically.
-But with just a little bit of setup, we can accomplish all of this in a much better way for the **target audience of this approach: people/organizations who use GitHub and Git**.
+But with just a little bit of setup, we can accomplish all of this in a much better way.
 
 ## Comparison
 
@@ -52,7 +59,7 @@ Here's how this approach compares to Bitly and similar services.
   You only need to pay for a custom domain name, if you want.
 - Not subject to the pricing whims of Bitly or similar services.
   Pricing and features should remain the same.
-- Uses tools and workflows you're already accustomed to and ideally prefer, assuming you're in the target audience mentioned above.
+- Uses tools and workflows you're already accustomed to.
   You don't need to create a new account just for this purpose, like you do for e.g. Bitly.
 - Multiple accounts can collaborate on the same set of links.
   Many URL shortening services don't offer this, or only offer it at enterprise-level pricing.
@@ -76,13 +83,13 @@ Here's how this approach compares to Bitly and similar services.
 **The downsides**:
 
 - More setup.
-- Your redirect lists are not truly 100% hidden from the public[^1].
-- Editing YAML is slightly harder than typing in textboxes, so you could accidentally break the formatting.
+- Your redirect lists are not truly private, only obfuscated.[^1].
+- Editing YAML is bit harder than typing in text boxes, so you could accidentally break the formatting.
 - If things go wrong, you have to troubleshoot it yourself or ask for help.
 
 ## How it works
 
-You have a **private** _redirects_ GitHub repository that contains your redirect lists as [`.yaml`](https://en.wikipedia.org/wiki/YAML) files.
+You have a **private** _redirects_ GitHub repository that contains your redirect lists as `.yaml` files.
 This is how you specify where you want to redirect from and to.
 You choose who can see or edit these lists using GitHub's permission settings.
 
@@ -138,7 +145,7 @@ Adding/removing/changing a link goes like this:
 Then, a user visiting a link goes like this:
 
 1. They navigate to a link on the website, e.g. `/chatroom`.
-1. `chatroom.html` isn't a file in the _website repo_, and thus isn't a page on the website, so GitHub loads the [`404.html`](https://en.wikipedia.org/wiki/HTTP_404) page for the user instead (but preserves the `/chatroom` URL).
+1. `chatroom.html` isn't a file in the _website repo_, and thus isn't a page on the website, so GitHub loads the `404.html` page for the user instead (but preserves the `/chatroom` URL).
    This page immediately runs some scripts:
 1. The analytics code snippet sends[^2] stats like URL, IP, date, time, location, etc. off to Google Analytics or whoever.
 1. The `redirect.js` script decodes the redirect lists previously encoded from the _redirects repo_, finds the destination URL corresponding to "chatroom" (**case-insensitive**), and navigates there instead.
@@ -226,7 +233,7 @@ If you already have a website being hosted with GitHub Pages that you want to in
 1. Skip templating the _website repo_.
 1. Instead, copy the [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the root of your existing website, and modify `baseurl` in it as appropriate.
 1. Run the `redirect.js` script from your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
-   Note: If a redirect `from` has the same name/path of an existing page, the redirect won't happen since the user will just get that page instead of a [`404`](https://en.wikipedia.org/wiki/HTTP_404).
+   Note: If a redirect `from` has the same name/path of an existing page, the redirect won't happen since the user will just get that page instead of a 404.
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.
 
