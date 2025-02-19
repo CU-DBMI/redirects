@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+
   # when someone requests a change to main branch
   pull_request:
     branches:
@@ -13,8 +14,12 @@ on:
   # run periodically
   schedule:
     - cron: "0 0 * * 0"
+
   # run manually
   workflow_dispatch:
+
+env:
+  FORCE_COLOR: true
 
 jobs:
   check:
@@ -30,7 +35,7 @@ jobs:
         uses: oven-sh/setup-bun@v1
 
       - name: Install packages
-        run: bun install glob@v9 yaml@v2
+        run: bun install glob@v11 yaml@v2 chalk@v5
 
       - name: Run check script
-        run: bun ./check.js
+        run: bun ./check-broken.js
