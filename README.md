@@ -157,10 +157,10 @@ A `check-broken.js` script also runs periodically and on changes to your _redire
 
 ### Set up repos
 
-1. [Use the _redirects repo_ (this repo) as a template](https://github.com/CU-DBMI/redirects/generate).
+1. [Use the _redirects repo_ (this repo) as a template](https://github.com/rapidteam/redirects/generate).
    **Do not fork**, because you cannot make forks private.
    _Name it `redirects` and make it private_.
-1. [Use the _website repo_ as a template](https://github.com/CU-DBMI/redirects-website/generate).
+1. [Use the _website repo_ as a template](https://github.com/rapidteam/redirects-website/generate).
    _Name it `redirects-website` and make it public_.
 1. [Enable GitHub Pages](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site) on your copied _website repo_ with the default settings.
 1. After a minute or so, GitHub should tell you that your site is now being hosted at `your-org.github.io/redirects-website`.
@@ -231,8 +231,8 @@ In your _website repo_:
 If you already have a website being hosted with GitHub Pages that you want to incorporate this approach into:
 
 1. Skip templating the _website repo_.
-1. Instead, copy the [`redirect.js` script](https://github.com/CU-DBMI/redirects-website/blob/main/redirect.js) into the root of your existing website, and modify `baseurl` in it as appropriate.
-1. Run the `redirect.js` script from your 404 page in the [same way it is done here](https://github.com/CU-DBMI/redirects-website/blob/main/404.html).
+1. Instead, copy the [`redirect.js` script](https://github.com/rapidteam/redirects-website/blob/main/redirect.js) into the root of your existing website, and modify `baseurl` in it as appropriate.
+1. Run the `redirect.js` script from your 404 page in the [same way it is done here](https://github.com/rapidteam/redirects-website/blob/main/404.html).
    Note: If a redirect `from` has the same name/path of an existing page, the redirect won't happen since the user will just get that page instead of a 404.
 
 If your existing website is built and hosted in a different way, this approach would require modification[^3] and might not be appropriate for you.

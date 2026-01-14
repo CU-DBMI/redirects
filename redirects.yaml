@@ -1,5 +1,6 @@
-- from: chatroom
-  to: https://zoom.us/j/12345abcdef
-- from: googledoc
-  to: https://docs.google.com/document/d/12345abcdef
+- from: team
+  to: https://rapidteam.org/about
+- from: meeting
+  to: https://zoom.us/j/YOUR_MEETING_ID_HERE
+# Add your redirects here following the same format
 # ... etc.
